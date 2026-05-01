@@ -1,0 +1,21 @@
+using UnityEngine;
+using UnityEngine.Events;
+
+public class Plane : MonoBehaviour
+{
+    public event UnityAction OnCollisionWithCube;
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if(collision.gameObject.TryGetComponent<Cube>(out Cube cube))
+        {
+            Debug.Log("Cube in zone");
+
+            if (cube.IsLiving == false)
+            {
+                Debug.Log("Cube started");
+                cube.StartLifespanCountdown();
+            }
+        }
+    }
+}
