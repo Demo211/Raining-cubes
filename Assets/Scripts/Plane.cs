@@ -9,11 +9,8 @@ public class Plane : MonoBehaviour
     {
         if(collision.gameObject.TryGetComponent<Cube>(out Cube cube))
         {
-            Debug.Log("Cube in zone");
-
             if (cube.IsLiving == false)
             {
-                Debug.Log("Cube started");
                 cube.StartLifespanCountdown();
             }
         }

@@ -7,6 +7,7 @@ public class Cube : MonoBehaviour
 {
     [SerializeField] private float minimalLifespan;
     [SerializeField] private float maximalLifespan;
+
     private ObjectPool<Cube> _pool;
     private float _lifetime;
 

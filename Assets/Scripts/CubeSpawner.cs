@@ -2,7 +2,6 @@ using System.Collections;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Pool;
-using UnityEngine.Rendering;
 using static Utils;
 
 public class CubeSpawner: MonoBehaviour
@@ -19,13 +18,12 @@ public class CubeSpawner: MonoBehaviour
     {
         _pool = new ObjectPool<Cube>(CreatePoolStash, GetFromPool, ReleaseToPool, DestroyInPool);
         
-        StartCoroutine(Spawn());
-        
+        StartCoroutine(Spawn());        
     }
 
     private IEnumerator Spawn()
     {
-        while (true)
+        while (this.enabled)
         {
             yield return new WaitForSeconds(_timeBetweenSpawns);
             _pool.Get();
