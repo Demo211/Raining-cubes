@@ -1526,9 +1526,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _spawnZoneRestrictions: {x: 15, y: 3, z: 15}
-  _material: {fileID: 2100000, guid: 1cef938def0b527469f8ef0720c534dc, type: 2}
-  _defaultColor: {r: 0, g: 0.02185011, b: 1, a: 0}
-  _timeBetweenSpawns: 0.4
+  _timeBetweenSpawns: 1
   _cubePrefab: {fileID: -7868964765838927915, guid: 9fce5f6c10e964749aae9727acb10263, type: 3}
 --- !u!1 &1817912164
 GameObject:
