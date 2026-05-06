@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Collections;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -11,23 +12,31 @@ public class CubeSpawner: MonoBehaviour
     [SerializeField] private Cube _cubePrefab;
 
     private ObjectPool<Cube> _pool;
-
-    #region Singleton
-
-    public static CubeSpawner Instance;
+    private List<Cube> _activatedCubes;
 
     private void Awake()
     {
-        Instance = this;
-    }
-
-    #endregion
-
-    private void OnEnable()
-    {
+        _activatedCubes = new List<Cube>();
         _pool = new ObjectPool<Cube>(CreatePoolStash, GetFromPool, ReleaseToPool, DestroyInPool);
         
         StartCoroutine(Spawn());        
+    }
+
+    private void FixedUpdate()
+    {
+        for (int i =0; i< _activatedCubes.Count;)
+        {
+            Cube cube = _activatedCubes[i];
+
+            if (cube.gameObject.activeSelf == false)
+            {
+                _pool.Release(cube);
+            }
+            else
+            {
+                i++;
+            }
+        }
     }
 
     private IEnumerator Spawn()
@@ -39,28 +48,31 @@ public class CubeSpawner: MonoBehaviour
         }
     }
 
+    #region PoolOperations
+
     private Cube CreatePoolStash()
     {
-        Cube createdCube = Instantiate(_cubePrefab);
-
-        return createdCube;
+        return Instantiate(_cubePrefab);
     }
 
     private void GetFromPool(Cube cube)
     {
         cube.transform.position = GetRandomDropPoint();
-        cube.gameObject.SetActive(true);
+        cube.gameObject.SetActive(true);    
+        _activatedCubes.Add(cube);
     }
 
     private void ReleaseToPool(Cube cube)
     {
-        cube.gameObject.SetActive(false);
+        _activatedCubes.Remove(cube);
     }
 
     private void DestroyInPool(Cube cube)
     {
         cube.gameObject.IsDestroyed();
     }
+
+    #endregion
 
     private Vector3 GetRandomDropPoint()
     {
@@ -69,11 +81,6 @@ public class CubeSpawner: MonoBehaviour
                                     GetRandomInRange(-_spawnZoneRestrictions.x, _spawnZoneRestrictions.x));
 
         return transform.position + offset;
-    }
-
-    public void ReturnToPool(Cube cube)
-    {
-        _pool.Release(cube);
     }
 }
 

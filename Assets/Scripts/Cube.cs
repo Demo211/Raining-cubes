@@ -4,49 +4,42 @@ using static Utils;
 
 public class Cube : MonoBehaviour
 {
-    [SerializeField] private float minimalLifespan;
-    [SerializeField] private float maximalLifespan;
+    [SerializeField] private float _minimalLifespan;
+    [SerializeField] private float _maximalLifespan;
 
     private float _lifetime;
     private bool _isLiving = false;
 
-    private Color _defaultColor;
-    private Renderer _cubeRenderer;
-
-    private void Awake()
-    {
-        _cubeRenderer = GetComponent<Renderer>();
-        _defaultColor = _cubeRenderer.material.color;
-    }
-    private void OnDisable()
-    {
-        _isLiving = false;
-    }
+    [SerializeField] private CubeCollorChanger _colorChanger;
 
     private void OnCollisionEnter(Collision collision)
     {
-        if (collision.gameObject.TryGetComponent<Plane>(out Plane plane))
+        if (_isLiving == false)
         {
-            if (_isLiving == false)
+            if (collision.gameObject.TryGetComponent<Plane>(out Plane plane))
             {
                 StartLifespanCountdown();
             }
         }
     }
 
-private IEnumerator LifespanCounter(float  _lifetime)
+    private void OnDisable()
+    {
+        _isLiving = false;
+        _colorChanger.SetDefaultColor();
+    }    
+
+    private IEnumerator LifespanCounter(float  _lifetime)
     {
         yield return new WaitForSeconds(_lifetime);
-        _isLiving = false;
-        CubeSpawner.Instance.ReturnToPool(this);
-        _cubeRenderer.material.color = _defaultColor;
+        gameObject.SetActive(false);
     }
 
-    public void StartLifespanCountdown()
+    private void StartLifespanCountdown()
     {
         _isLiving = true;
-        _lifetime = GetRandomInRange(minimalLifespan, maximalLifespan);
-        _cubeRenderer.material.color = Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f);
+        _lifetime = GetRandomInRange(_minimalLifespan, _maximalLifespan);
+        _colorChanger.SetRandomColor();
 
         StartCoroutine(LifespanCounter(_lifetime));
     }
